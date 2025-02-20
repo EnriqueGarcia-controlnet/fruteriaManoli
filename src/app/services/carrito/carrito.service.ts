@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Fruta } from '../../interfaces/fruta.interface';
 import { Producto } from '../../interfaces/carrito.interface';
 
@@ -7,9 +7,10 @@ import { Producto } from '../../interfaces/carrito.interface';
 })
 export class CarritoService {
 
-  private producto: Producto[] = []
+  //private producto: Producto[] = []
+  
 
-  getCarrito(): Producto[]{
+  /* getCarrito(): Producto[]{
     return this.producto
   }
 
@@ -31,5 +32,41 @@ export class CarritoService {
 
   vaciarCarrito() {
     this.producto = []
+  }*/
+
+  producto = signal<Producto[]>([])
+
+  getCarrito(): Producto[]{
+    return this.producto()
+  }
+
+  agregarAlCarrito(fruta: Fruta){
+    const productosActuales = this.producto()
+    const item = productosActuales.find(item => item.fruta.id === fruta.id)
+
+    if (item) {
+      item.cantidad += 1
+    } else {
+      productosActuales.push({ fruta, cantidad: 1})
+    }
+    
+    this.producto.set([...productosActuales])
+  }
+  
+  eliminarDelCarrito(id: number) {
+    if(this.producto().length === 0) return
+
+    const item = this.producto().find(item => item.fruta.id === id)
+
+    if(item && item.cantidad > 1) {
+      item.cantidad -= 1
+    } else {
+      this.producto.set(this.producto().filter(item => item.fruta.id !== id))
+    }
+  }
+
+  vaciarCarrito() {
+    this.producto.set([])
   }
 }
+

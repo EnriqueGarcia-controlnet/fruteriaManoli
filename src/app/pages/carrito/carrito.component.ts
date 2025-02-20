@@ -1,11 +1,6 @@
 import { Component } from '@angular/core';
-import { Fruta } from '../../interfaces/fruta.interface';
 import { CarritoService } from '../../services/carrito/carrito.service';
 
-interface Producto {
-  fruta: Fruta;
-  cantidad: number;
-}
 
 @Component({
   selector: 'app-carrito',
@@ -15,16 +10,19 @@ interface Producto {
   styleUrl: './carrito.component.css'
 })
 export class CarritoComponent {
-  
-  carrito: Producto[] = []
 
   constructor(
     private carritoService:CarritoService
-  ) {
-    this.carrito = this.carritoService.getCarrito()
+  ) {}
+
+  getCarrito() {
+    return this.carritoService.getCarrito()
+  }
+  eliminarDelCarrito(id: number){
+    this.carritoService.eliminarDelCarrito(id)
   }
 
-  eliminarDelCarrito(id: number){
-    
+  vaciarCarrito() {
+    this.carritoService.vaciarCarrito()
   }
 }
